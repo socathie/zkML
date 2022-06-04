@@ -2,7 +2,7 @@ import ReactMarkdown from 'react-markdown';
 
 export default function About() {
 
-  const md = `# zkApp: Zero-Knowledge dApp Boilerplate`;
+  const md = `# zkML: Demo for circomlib-ml`;
 
   return (
     <ReactMarkdown children={md}/>

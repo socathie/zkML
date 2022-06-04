@@ -10,11 +10,38 @@ export async function generateCalldata(input) {
 
     let generateWitnessSuccess = true;
 
-    let formattedInput = {};
-    
-    for (var key in input) {
-        formattedInput[key] = Fr.e(input[key]);
+    const conv2d_weights = [];
+    const conv2d_bias = [];
+    const dense_weights = [];
+    const dense_bias = [];
+
+    var i;
+
+    for (i=0; i<input.conv2d_weights.length; i++) {
+        conv2d_weights.push(Fr.e(input.conv2d_weights[i]));
     }
+
+    for (i=0; i<input.conv2d_bias.length; i++) {
+        conv2d_bias.push(Fr.e(input.conv2d_bias[i]));
+    }
+
+    for (i=0; i<input.dense_weights.length; i++) {
+        dense_weights.push(Fr.e(input.dense_weights[i]));
+    }
+
+    for (i=0; i<input.dense_bias.length; i++) {
+        dense_bias.push(Fr.e(input.dense_bias[i]));
+    }
+
+    const formattedInput = {
+        "in": input.in,
+        "conv2d_weights": conv2d_weights,
+        "conv2d_bias": conv2d_bias,
+        "dense_weights": dense_weights,
+        "dense_bias": dense_bias
+    }
+
+    console.log(formattedInput);
 
     let witness = await generateWitness(formattedInput).then()
         .catch((error) => {

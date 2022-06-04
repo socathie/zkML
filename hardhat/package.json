@@ -1,7 +1,7 @@
 {
-  "name": "zk-app",
+  "name": "zk-ml",
   "version": "1.0.0",
-  "description": "Boilerplate for zkApp",
+  "description": "Demo for circomlib-ml",
   "scripts": {
     "compile:contracts": "npx hardhat compile --force",
     "develop": "npx hardhat node",
@@ -14,15 +14,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/socathie/zkApp.git"
+    "url": "https://github.com/socathie/zkML.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/socathie/zkApp.git/issues"
+    "url": "https://github.com/socathie/zkML.git/issues"
   },
-  "homepage": "https://github.com/socathie/zkApp.git#readme",
+  "homepage": "https://github.com/socathie/zkML.git#readme",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
     "@nomiclabs/hardhat-waffle": "^2.0.3",

@@ -29,10 +29,10 @@ export async function verifyProof(input: Object) {
             return calldata[3];
         }
         else {
-            throw "Invalid proof."
+            throw new Error("Invalid proof.");
         }
     }
     else {
-        throw "Witness generation failed.";
+        throw new Error("Witness generation failed.");
     }
 }

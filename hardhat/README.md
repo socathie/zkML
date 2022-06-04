@@ -1,4 +1,4 @@
-# zkApp
+# zkML
 
 Run `npm i` to install. Check out `package.json` for other commands to compile circuits and contracts.
 

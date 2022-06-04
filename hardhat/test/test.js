@@ -8,21 +8,51 @@ const Scalar = require("ffjavascript").Scalar;
 exports.p = Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617");
 const Fr = new F1Field(exports.p);
 
+const json = require("./mnist_poly_input.json");
+
+const conv2d_weights = [];
+const conv2d_bias = [];
+const dense_weights = [];
+const dense_bias = [];
+
+for (var i=0; i<json.conv2d_weights.length; i++) {
+    conv2d_weights.push(Fr.e(json.conv2d_weights[i]));
+}
+
+for (var i=0; i<json.conv2d_bias.length; i++) {
+    conv2d_bias.push(Fr.e(json.conv2d_bias[i]));
+}
+
+for (var i=0; i<json.dense_weights.length; i++) {
+    dense_weights.push(Fr.e(json.dense_weights[i]));
+}
+
+for (var i=0; i<json.dense_bias.length; i++) {
+    dense_bias.push(Fr.e(json.dense_bias[i]));
+}
+
+const INPUT = {
+    "in": json.in,
+    "conv2d_weights": conv2d_weights,
+    "conv2d_bias": conv2d_bias,
+    "dense_weights": dense_weights,
+    "dense_bias": dense_bias
+}
+
 describe("Circuit test", function () {
 
-    it("Multipler2 test", async () => {
+    it("MNIST poly test", async () => {
         const circuit = await wasm_tester("circuits/circuit.circom");
         await circuit.loadConstraints();
-
-        const INPUT = {
-            "a": 2,
-            "b": 3
-        }
+        assert.equal(circuit.nVars, 23622);
+        assert.equal(circuit.constraints.length, 16067);
 
         const witness = await circuit.calculateWitness(INPUT, true);
 
+        //console.log(witness[1]);
+
         assert(Fr.eq(Fr.e(witness[0]),Fr.e(1)));
-        assert(Fr.eq(Fr.e(witness[1]),Fr.e(6)));
+        assert(Fr.eq(Fr.e(witness[1]),Fr.e(7)));
     });
 });
 
@@ -38,7 +68,7 @@ describe("Verifier Contract", function () {
 
     it("Should return true for correct proofs", async function () {
 
-        const { proof, publicSignals } = await groth16.fullProve({"a":"1","b":"2"}, "circuits/build/circuit_js/circuit.wasm","circuits/build/circuit_final.zkey");
+        const { proof, publicSignals } = await groth16.fullProve(INPUT, "circuits/build/circuit_js/circuit.wasm","circuits/build/circuit_final.zkey");
 
         const calldata = await groth16.exportSolidityCallData(proof, publicSignals);
     
