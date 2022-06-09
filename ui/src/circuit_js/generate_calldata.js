@@ -53,7 +53,7 @@ export async function generateCalldata(input) {
 
     if (!generateWitnessSuccess) { return; }
 
-    const { proof, publicSignals } = await groth16.prove('circuit_final.zkey', witness);
+    const { proof, publicSignals } = await groth16.prove('circuit_final.zkey', witness); //TODO: switch to accept general zkey file
     
     const calldata = await groth16.exportSolidityCallData(proof, publicSignals);
 

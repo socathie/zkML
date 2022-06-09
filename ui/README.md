@@ -1,4 +1,6 @@
-# Getting Started with Create React App
+# zkML
+
+zkML, a demo application for [circomlib-ml](https://www.npmjs.com/package/circomlib-ml), is deployed on https://zk-ml.netlify.app
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

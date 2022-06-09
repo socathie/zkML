@@ -1,7 +1,7 @@
 import wc from "./witness_calculator";
 
 export async function generateWitness (input) {
-	const response = await fetch('circuit.wasm');
+	const response = await fetch('circuit.wasm');  //TODO: switch to accept general wasm files
 	const buffer = await response.arrayBuffer();
 	//console.log(buffer);
 	let buff;
