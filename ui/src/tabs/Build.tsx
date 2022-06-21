@@ -86,7 +86,7 @@ export default function Build() {
         try {
             let loadJson = JSON.parse(event.target.result);
 
-            if (loadJson.constructor == Object) {
+            if (loadJson.constructor === Object) {
                 setSelectedJson(loadJson);
                 setJsonLoaded(true);
             }
