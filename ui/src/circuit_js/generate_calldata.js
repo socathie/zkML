@@ -3,13 +3,23 @@
 import { generateWitness } from './generate_witness';
 import { groth16 } from 'snarkjs';
 
-import { F1Field, Scalar} from  "ffjavascript"; 
+import { F1Field, Scalar } from "ffjavascript";
 const Fr = new F1Field(Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617"));
 
 export async function generateCalldata(input) {
 
     let generateWitnessSuccess = true;
 
+    let formattedInput = {};
+
+    for (const [key, value] of Object.entries(input)) {
+        let tmpArray = [];
+        for (let i = 0; i < value.flat().length; i++) {
+            tmpArray.push(Fr.e(value.flat()[i]));
+        }
+        formattedInput[key] = tmpArray;
+    }
+    /*
     const conv2d_weights = [];
     const conv2d_bias = [];
     const dense_weights = [];
@@ -40,7 +50,7 @@ export async function generateCalldata(input) {
         "dense_weights": dense_weights,
         "dense_bias": dense_bias
     }
-
+    */
     console.log(formattedInput);
 
     let witness = await generateWitness(formattedInput).then()
@@ -48,13 +58,13 @@ export async function generateCalldata(input) {
             console.error(error);
             generateWitnessSuccess = false;
         });
-    
+
     //console.log(witness);
 
     if (!generateWitnessSuccess) { return; }
 
     const { proof, publicSignals } = await groth16.prove('circuit_final.zkey', witness); //TODO: switch to accept general zkey file
-    
+
     const calldata = await groth16.exportSolidityCallData(proof, publicSignals);
 
     const argv = calldata.replace(/["[\]\s]/g, "").split(',').map(x => BigInt(x).toString());
