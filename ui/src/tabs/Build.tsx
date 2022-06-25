@@ -3,7 +3,8 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
-import { verifyProof } from "../contract";
+import TextField from "@mui/material/TextField";
+import { verifyProofLocal } from "../contract";
 import Loading from "./components/Loading";
 
 import images from "../mnist/image.json";
@@ -25,21 +26,27 @@ export default function Build() {
     const [correct, setCorrect] = useState(0);
     const [total, setTotal] = useState(0);
 
+    const [factor, setFactor] = useState(1);
+    const [factorDisable, setFactorDisable] = useState(false);
+
     const verify = async (event: any) => {
         event.preventDefault();
         setError(false);
 
         setVerifying(true);
 
-        console.log(selectedJson);
-        let json = { ...images[index], ...selectedJson };
-        let prediction = await verifyProof(json)
+        //console.log(selectedJson);
+        let image = images[index].in.flat().map(x => x*factor);
+        
+        let json = { ...{ "in": image }, ...selectedJson };
+
+        let prediction = await verifyProofLocal(json, selectedWasm!)
             .catch((error: any) => {
                 setErrorMsg(error.toString());
                 setError(true);
                 setVerifying(false);
             });
-        setOutput(prediction);
+        setOutput(prediction.toString());
         setVerifying(false);
 
         setTotal(total + 1);
@@ -56,15 +63,27 @@ export default function Build() {
         event.preventDefault();
     }
 
-    /*
-    const [selectedWasm, setSelectedWasm] = useState();
-    const [isWasmPicked, setIsWasmPicked] = useState(false);
+    const [selectedWasm, setSelectedWasm] = useState<ArrayBuffer>();
+    const [wasmLoaded, setWasmLoaded] = useState(false);
+
+    let wasmReader = new FileReader();
 
     const changeWasmHandler = (event: any) => {
-        setSelectedWasm(event.target.files[0]);
-        setIsWasmPicked(true);
-    };
-    */
+        let file = event.target.files[0];
+        if (file) {
+            setLoading(true);
+            setError(false);
+            setWasmLoaded(false);
+            wasmReader.onload = onWasmLoad;
+            wasmReader.readAsArrayBuffer(file);
+        }
+    }
+
+    const onWasmLoad = (event: any) => {
+        setSelectedWasm(event.target.result);
+        setWasmLoaded(true);
+        setLoading(false);
+    }
 
     const [selectedJson, setSelectedJson] = useState({});
     const [jsonLoaded, setJsonLoaded] = useState(false);
@@ -102,6 +121,28 @@ export default function Build() {
         setLoading(false);
     }
 
+    const inputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.value !== "" && event.target.value !== "0") {
+            setFactor(parseInt(event.target.value));
+            setFactorDisable(false);
+        }
+        else {
+            setFactorDisable(true);
+        }
+    };
+
+    const enterHandler = async (event: any) => {
+        if (event.which === "13") {
+            event.preventDefault();
+        }
+    };
+
+    const keyHandler = async (event: any) => {
+        if (['e', 'E', '+', '-', '.', 'Enter'].includes(event.key)) {
+            event.preventDefault();
+        }
+    };
+
     return (
         <Box
             component="form"
@@ -127,12 +168,42 @@ export default function Build() {
                 cellHeight="1rem"
             />
             <br />
+            <Typography>Upload your own model WebAssembly file:</Typography>
+            <input type="file" name="file" onChange={changeWasmHandler} accept=".wasm" />
+            <Button
+                href={process.env.PUBLIC_URL + "/mnist_convnet_test.wasm"}
+                download="mnist_convnet_test.wasm"
+                variant="contained">
+                Download sample wasm
+            </Button>
             <Typography>Upload your own model weights:</Typography>
             <input type="file" name="file" onChange={changeJsonHandler} accept=".json" />
+            <Button
+                href={process.env.PUBLIC_URL + "/mnist_convnet_model.json"}
+                download="mnist_convnet_model.json"
+                variant="contained">
+                Download sample json
+            </Button>
             <br />
+            <TextField
+                id="scaling-factor"
+                label="Pixel Scaling Factor"
+                type="number"
+                InputLabelProps={{
+                    shrink: true,
+                }}
+                InputProps={{
+                    inputProps: { min: 1 }
+                }}
+                defaultValue={1}
+                variant="filled"
+                onKeyDown={keyHandler}
+                onChange={inputHandler}
+                onKeyPress={enterHandler}
+            /><br />
             <Button
                 onClick={verify}
-                disabled={!jsonLoaded}
+                disabled={!jsonLoaded || !wasmLoaded || factorDisable}
                 variant="contained">
                 Classify
             </Button>
