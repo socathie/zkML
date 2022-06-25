@@ -1,23 +1,27 @@
 /* global BigInt */
 
-import { generateWitness } from './generate_witness';
+import { generateWitness, generateWitnessPlain } from './generate_witness';
 import { groth16 } from 'snarkjs';
 
 import { F1Field, Scalar } from "ffjavascript";
 const Fr = new F1Field(Scalar.fromString("21888242871839275222246405745257275088548364400416034343698204186575808495617"));
 
-export async function generateCalldata(input) {
+export async function generateCalldata(input, wasmBuffer) {
 
     let generateWitnessSuccess = true;
 
     let formattedInput = {};
 
     for (const [key, value] of Object.entries(input)) {
-        let tmpArray = [];
-        for (let i = 0; i < value.flat().length; i++) {
-            tmpArray.push(Fr.e(value.flat()[i]));
+        if (Array.isArray(value)) {
+            let tmpArray = [];
+            for (let i = 0; i < value.flat().length; i++) {
+                tmpArray.push(Fr.e(value.flat()[i]));
+            }
+            formattedInput[key] = tmpArray;
+        } else {
+            formattedInput[key] = Fr.e(value);
         }
-        formattedInput[key] = tmpArray;
     }
     /*
     const conv2d_weights = [];
@@ -53,7 +57,7 @@ export async function generateCalldata(input) {
     */
     console.log(formattedInput);
 
-    let witness = await generateWitness(formattedInput).then()
+    let witness = await generateWitness(formattedInput, wasmBuffer).then()
         .catch((error) => {
             console.error(error);
             generateWitnessSuccess = false;
@@ -77,4 +81,29 @@ export async function generateCalldata(input) {
     const Input = argv.slice(8);
 
     return [a, b, c, Input];
+}
+
+export async function generateWitnessOnly(input, wasmBuffer) {
+
+    let formattedInput = {};
+
+    for (const [key, value] of Object.entries(input)) {
+        if (Array.isArray(value)) {
+            let tmpArray = [];
+            for (let i = 0; i < value.flat().length; i++) {
+                tmpArray.push(Fr.e(value.flat()[i]));
+            }
+            formattedInput[key] = tmpArray;
+        } else {
+            formattedInput[key] = Fr.e(value);
+        }
+    }
+
+    console.log(formattedInput);
+
+    let witness = await generateWitnessPlain(formattedInput, wasmBuffer);
+
+    //console.log(witness);
+    
+    return witness[1];
 }

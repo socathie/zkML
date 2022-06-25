@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import address from './artifacts/address.json';
 import Verifier from './artifacts/Verifier.json';
-import { generateCalldata } from './circuit_js/generate_calldata';
+import { generateCalldata, generateWitnessOnly } from './circuit_js/generate_calldata';
 
 let verifier: ethers.Contract;
 
@@ -17,11 +17,11 @@ export async function connectContract() {
     console.log("Connect to Verifier Contract:", Verifier);
 }
 
-export async function verifyProof(input: Object) {
+export async function verifyProof(input: Object, wasmBuffer: ArrayBuffer) {
 
     await connectContract();
 
-    let calldata = await generateCalldata(input);
+    let calldata = await generateCalldata(input, wasmBuffer);
 
     if (calldata) {
         let valid = await verifier.verifyProof(calldata[0], calldata[1], calldata[2], calldata[3]);
@@ -35,4 +35,13 @@ export async function verifyProof(input: Object) {
     else {
         throw new Error("Witness generation failed.");
     }
+}
+
+export async function verifyProofLocal(input: Object, wasmBuffer: ArrayBuffer) {
+
+    await connectContract();
+
+    let witness = await generateWitnessOnly(input, wasmBuffer);
+
+    return witness;
 }
