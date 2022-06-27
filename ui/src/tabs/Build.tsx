@@ -37,7 +37,7 @@ export default function Build() {
 
         //console.log(selectedJson);
         let image = images[index].in.flat().map(x => x*factor);
-        
+
         let json = { ...{ "in": image }, ...selectedJson };
 
         let prediction = await verifyProofLocal(json, selectedWasm!)
@@ -76,6 +76,9 @@ export default function Build() {
             setWasmLoaded(false);
             wasmReader.onload = onWasmLoad;
             wasmReader.readAsArrayBuffer(file);
+        } else {
+            setError(false);
+            setWasmLoaded(false);
         }
     }
 
@@ -98,6 +101,9 @@ export default function Build() {
             setJsonLoaded(false);
             jsonReader.onload = onJsonLoad;
             jsonReader.readAsText(file);
+        } else {
+            setError(false);
+            setJsonLoaded(false);
         }
     }
 
