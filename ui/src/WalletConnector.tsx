@@ -2,7 +2,7 @@ import Fab from '@mui/material/Fab';
 import Backdrop from '@mui/material/Backdrop';
 import { useEffect, useState } from 'react';
 
-const testnetChainId = '0x6357d2e0'
+const testnetChainId = '0x635ae020'
 
 export default function WalletConnector() {
   const { ethereum } = window;
@@ -74,14 +74,14 @@ export default function WalletConnector() {
               params: [
                 {
                   chainId: testnetChainId,
-                  chainName: 'Harmony Testnet',
+                  chainName: 'Harmony Devnet',
                   nativeCurrency: {
                     name: 'ONE',
                     symbol: 'ONE',
                     decimals: 18
                   },
-                  rpcUrls: ['https://api.s0.b.hmny.io'],
-                  blockExplorerUrls: ['https://explorer.pops.one']
+                  rpcUrls: ['https://api.s0.ps.hmny.io/'],
+                  blockExplorerUrls: ['https://explorer.ps.hmny.io/']
                 },
               ],
             });
