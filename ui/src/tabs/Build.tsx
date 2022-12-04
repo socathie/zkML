@@ -26,14 +26,14 @@ export default function Build() {
     const [correct, setCorrect] = useState(0);
     const [total, setTotal] = useState(0);
 
+    // read model from json, add input, then generate witness
     const verify = async (event: any) => {
         event.preventDefault();
         setError(false);
 
         setVerifying(true);
-
-        //console.log(selectedJson);
-        let image = images[index].in.flat();//.map(x => x*factor);
+        
+        let image = images[index].in.flat();
 
         let json = { ...{ "in": image }, ...selectedJson };
 

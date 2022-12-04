@@ -27,9 +27,6 @@ export default function Classify() {
     const [correct, setCorrect] = useState(0);
     const [total, setTotal] = useState(0);
 
-    // const [factor, setFactor] = useState(1000000);
-    // const [factorDisable, setFactorDisable] = useState(false);
-
     const verify = async (event: any) => {
         event.preventDefault();
         setError(false);
@@ -38,12 +35,12 @@ export default function Classify() {
         const buffer = await response.arrayBuffer();
 
         setVerifying(true);
-        
 
-        let image = images[index].in.flat();//.map(x => x*factor);
+        let image = images[index].in.flat();
 
         let json = { ...{ "in": image }, ...model };
 
+        // verify on chain
         let prediction = await verifyProof(json, buffer)
             .catch((error: any) => {
                 setErrorMsg(error.toString());

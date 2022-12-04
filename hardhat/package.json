@@ -30,7 +30,7 @@
     "circom_tester": "^0.0.19",
     "circomlib": "^2.0.5",
     "circomlib-matrix": "^1.0.2",
-    "circomlib-ml": "^1.4.2",
+    "circomlib-ml": "^1.4.3",
     "circomlibjs": "^0.1.7",
     "dotenv": "^16.0.1",
     "ethereum-waffle": "^3.4.4",
