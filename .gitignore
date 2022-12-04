@@ -125,7 +125,7 @@ dist
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-hardhat/circuits/build
+hardhat/circuits/*/build
 hardhat/artifacts
 hardhat/cache
 *.ptau
