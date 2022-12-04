@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 export default function About() {
 
   const md = `
-  # zkML: Demo for circomlib-ml on Harmony testnet
+  # zkML: Demo for circomlib-ml on Goerli testnet
 
   ## Usage
 

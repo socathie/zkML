@@ -37,11 +37,11 @@ export async function verifyProof(input: Object, wasmBuffer: ArrayBuffer) {
     }
 }
 
-export async function verifyProofLocal(input: Object, wasmBuffer: ArrayBuffer) {
+export async function verifyProofLocal(input: Object, wasmBuffer: ArrayBuffer, numOutputs: number) {
 
     await connectContract();
 
-    let witness = await generateWitnessOnly(input, wasmBuffer);
+    let witness = await generateWitnessOnly(input, wasmBuffer, numOutputs);
 
     return witness;
 }

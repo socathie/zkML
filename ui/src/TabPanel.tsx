@@ -4,8 +4,9 @@ import Tab from '@mui/material/Tab';
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box';
 import About from './tabs/About';
-import Classify from './tabs/Classify';
 import Build from './tabs/Build';
+import Classify from './tabs/Classify';
+import Decrypt from './tabs/Decrypt';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -62,6 +63,7 @@ export default function BasicTabs() {
           <Tab label="About" {...a11yProps(1)} />
           <Tab label="Classify" {...a11yProps(2)} />
           <Tab label="Build" {...a11yProps(3)} />
+          <Tab label="Decrypt" {...a11yProps(4)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={1}>
@@ -72,6 +74,9 @@ export default function BasicTabs() {
       </TabPanel>
       <TabPanel value={value} index={3}>
         <Build />
+      </TabPanel>
+      <TabPanel value={value} index={4}>
+        <Decrypt />
       </TabPanel>
     </Box>
   );

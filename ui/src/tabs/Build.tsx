@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
 import { verifyProofLocal } from "../contract";
 import Loading from "./components/Loading";
 
@@ -15,6 +14,7 @@ import { HeatMapGrid } from "react-grid-heatmap";
 export default function Build() {
 
     const [output, setOutput] = useState("");
+    const [hash, setHash] = useState("");
 
     const [error, setError] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
@@ -26,9 +26,6 @@ export default function Build() {
     const [correct, setCorrect] = useState(0);
     const [total, setTotal] = useState(0);
 
-    const [factor, setFactor] = useState(1);
-    const [factorDisable, setFactorDisable] = useState(false);
-
     const verify = async (event: any) => {
         event.preventDefault();
         setError(false);
@@ -36,21 +33,22 @@ export default function Build() {
         setVerifying(true);
 
         //console.log(selectedJson);
-        let image = images[index].in.flat().map(x => x*factor);
+        let image = images[index].in.flat();//.map(x => x*factor);
 
         let json = { ...{ "in": image }, ...selectedJson };
 
-        let prediction = await verifyProofLocal(json, selectedWasm!)
+        let witness = await verifyProofLocal(json, selectedWasm!, 2)
             .catch((error: any) => {
                 setErrorMsg(error.toString());
                 setError(true);
                 setVerifying(false);
             });
-        setOutput(prediction.toString());
+        setOutput(witness![0].toString());
+        setHash(witness![1].toString());
         setVerifying(false);
 
         setTotal(total + 1);
-        if (prediction.toString() === labels[index].toString()) {
+        if (witness![0].toString() === labels[index].toString()) {
             setCorrect(correct + 1);
         }
         event.preventDefault();
@@ -127,28 +125,6 @@ export default function Build() {
         setLoading(false);
     }
 
-    const inputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.value !== "" && event.target.value !== "0") {
-            setFactor(parseInt(event.target.value));
-            setFactorDisable(false);
-        }
-        else {
-            setFactorDisable(true);
-        }
-    };
-
-    const enterHandler = async (event: any) => {
-        if (event.which === "13") {
-            event.preventDefault();
-        }
-    };
-
-    const keyHandler = async (event: any) => {
-        if (['e', 'E', '+', '-', '.', 'Enter'].includes(event.key)) {
-            event.preventDefault();
-        }
-    };
-
     return (
         <Box
             component="form"
@@ -177,7 +153,7 @@ export default function Build() {
             <Typography>Upload your own model WebAssembly file:</Typography>
             <input type="file" name="file" onChange={changeWasmHandler} accept=".wasm" />
             <Button
-                href={process.env.PUBLIC_URL + "/mnist_convnet_test.wasm"}
+                href={process.env.PUBLIC_URL + "/mnist_latest_test.wasm"}
                 download="mnist_convnet_test.wasm"
                 variant="contained">
                 Download sample wasm
@@ -185,31 +161,15 @@ export default function Build() {
             <Typography>Upload your own model weights:</Typography>
             <input type="file" name="file" onChange={changeJsonHandler} accept=".json" />
             <Button
-                href={process.env.PUBLIC_URL + "/mnist_convnet_model.json"}
+                href={process.env.PUBLIC_URL + "/mnist_latest_model.json"}
                 download="mnist_convnet_model.json"
                 variant="contained">
                 Download sample json
             </Button>
             <br />
-            <TextField
-                id="scaling-factor"
-                label="Pixel Scaling Factor"
-                type="number"
-                InputLabelProps={{
-                    shrink: true,
-                }}
-                InputProps={{
-                    inputProps: { min: 1 }
-                }}
-                defaultValue={1}
-                variant="filled"
-                onKeyDown={keyHandler}
-                onChange={inputHandler}
-                onKeyPress={enterHandler}
-            /><br />
             <Button
                 onClick={verify}
-                disabled={!jsonLoaded || !wasmLoaded || factorDisable}
+                disabled={!jsonLoaded || !wasmLoaded }// || factorDisable}
                 variant="contained">
                 Classify
             </Button>
@@ -219,6 +179,7 @@ export default function Build() {
             {error ? <Alert severity="error" sx={{ textAlign: "left" }}>{errorMsg}</Alert> : <div />}
             <Typography>Label: {labels[index]}</Typography>
             <Typography>Prediction: {output}</Typography>
+            <Typography>Model hash: {hash}</Typography>
             <Typography>Current accuracy: {(correct * 100 / total).toFixed(2)} %</Typography>
         </Box>
     );

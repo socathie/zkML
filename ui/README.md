@@ -1,4 +1,4 @@
-# zkML
+# zkML-ui
 
 zkML, a demo application for [circomlib-ml](https://www.npmjs.com/package/circomlib-ml), is deployed on https://zk-ml.netlify.app
 

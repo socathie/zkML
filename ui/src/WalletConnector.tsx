@@ -2,7 +2,7 @@ import Fab from '@mui/material/Fab';
 import Backdrop from '@mui/material/Backdrop';
 import { useEffect, useState } from 'react';
 
-const testnetChainId = '0x635ae020'
+const testnetChainId = '0x5'
 
 export default function WalletConnector() {
   const { ethereum } = window;
@@ -74,14 +74,14 @@ export default function WalletConnector() {
               params: [
                 {
                   chainId: testnetChainId,
-                  chainName: 'Harmony Devnet',
+                  chainName: 'Goerli',
                   nativeCurrency: {
-                    name: 'ONE',
-                    symbol: 'ONE',
+                    name: 'GoerliETH',
+                    symbol: 'GoerliETH',
                     decimals: 18
                   },
-                  rpcUrls: ['https://api.s0.ps.hmny.io/'],
-                  blockExplorerUrls: ['https://explorer.ps.hmny.io/']
+                  rpcUrls: ['https://goerli.infura.io/v3/'],
+                  blockExplorerUrls: ['https://goerli.etherscan.io']
                 },
               ],
             });

@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
 import { verifyProof } from "../contract";
 import Loading from "./components/Loading";
 
@@ -17,6 +16,7 @@ import { HeatMapGrid } from "react-grid-heatmap";
 export default function Classify() {
 
     const [output, setOutput] = useState("");
+    const [hash, setHash] = useState("");
 
     const [error, setError] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
@@ -27,8 +27,8 @@ export default function Classify() {
     const [correct, setCorrect] = useState(0);
     const [total, setTotal] = useState(0);
 
-    const [factor, setFactor] = useState(1000000);
-    const [factorDisable, setFactorDisable] = useState(false);
+    // const [factor, setFactor] = useState(1000000);
+    // const [factorDisable, setFactorDisable] = useState(false);
 
     const verify = async (event: any) => {
         event.preventDefault();
@@ -40,7 +40,7 @@ export default function Classify() {
         setVerifying(true);
         
 
-        let image = images[index].in.flat().map(x => x*factor);
+        let image = images[index].in.flat();//.map(x => x*factor);
 
         let json = { ...{ "in": image }, ...model };
 
@@ -50,11 +50,12 @@ export default function Classify() {
                 setError(true);
                 setVerifying(false);
             });
-        setOutput(prediction);
+        setOutput(prediction![0]);
+        setHash(prediction![1]);
         setVerifying(false);
 
         setTotal(total + 1);
-        if (prediction.toString() === labels[index].toString()) {
+        if (prediction![0].toString() === labels[index].toString()) {
             setCorrect(correct + 1);
         }
         event.preventDefault();
@@ -66,28 +67,6 @@ export default function Classify() {
         setIndex(Math.floor(Math.random() * 100));
         event.preventDefault();
     }
-
-    const inputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.value !== "" && event.target.value !== "0") {
-            setFactor(parseInt(event.target.value));
-            setFactorDisable(false);
-        }
-        else {
-            setFactorDisable(true);
-        }
-    };
-
-    const enterHandler = async (event: any) => {
-        if (event.which === "13") {
-            event.preventDefault();
-        }
-    };
-
-    const keyHandler = async (event: any) => {
-        if (['e', 'E', '+', '-', '.', 'Enter'].includes(event.key)) {
-            event.preventDefault();
-        }
-    };
 
     return (
         <Box
@@ -112,26 +91,8 @@ export default function Classify() {
                 square={true}
                 cellHeight="1rem"
             />
-            <TextField
-                id="scaling-factor"
-                label="Pixel Scaling Factor"
-                type="number"
-                InputLabelProps={{
-                    shrink: true,
-                }}
-                InputProps={{
-                    inputProps: { min: 1 }
-                }}
-                value={1000000}
-                disabled={true}
-                variant="filled"
-                onKeyDown={keyHandler}
-                onChange={inputHandler}
-                onKeyPress={enterHandler}
-            /><br />
             <Button
                 onClick={verify}
-                disabled={factorDisable}
                 variant="contained">
                 Classify
             </Button>
@@ -140,6 +101,7 @@ export default function Classify() {
             {error ? <Alert severity="error" sx={{ textAlign: "left" }}>{errorMsg}</Alert> : <div />}
             <Typography>Label: {labels[index]}</Typography>
             <Typography>Prediction: {output}</Typography>
+            <Typography>Model hash: {hash}</Typography>
             <Typography>Current accuracy: {(correct * 100 / total).toFixed(2)} %</Typography>
         </Box>
     );

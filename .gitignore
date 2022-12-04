@@ -130,3 +130,5 @@ hardhat/artifacts
 hardhat/cache
 *.ptau
 hardhat/deployments
+
+ui/build

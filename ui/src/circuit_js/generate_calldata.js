@@ -83,7 +83,7 @@ export async function generateCalldata(input, wasmBuffer) {
     return [a, b, c, Input];
 }
 
-export async function generateWitnessOnly(input, wasmBuffer) {
+export async function generateWitnessOnly(input, wasmBuffer, numOutputs) {
 
     let formattedInput = {};
 
@@ -105,5 +105,5 @@ export async function generateWitnessOnly(input, wasmBuffer) {
 
     //console.log(witness);
     
-    return witness[1];
+    return witness.slice(1,numOutputs+1);
 }
