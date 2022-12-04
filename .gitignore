@@ -132,3 +132,6 @@ hardhat/cache
 hardhat/deployments
 
 ui/build
+
+# Local Netlify folder
+.netlify
